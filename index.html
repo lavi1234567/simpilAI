@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Selection Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="loading" style="display: none;">Processing...</div>
+    <div id="content">
+        <p>Cloud computing is the delivery of computing services—including servers, storage, databases, networking, software, analytics, and intelligence—over the Internet ("the cloud") to offer faster innovation, flexible resources, and economies of scale. You typically pay only for cloud services you use, helping lower your operating costs, run your infrastructure more efficiently, and scale as your business needs change.</p>
+        <p>Cloud computing is a big shift from the traditional way businesses think about IT resources. Here are seven common reasons organizations are turning to cloud computing services:</p>
+        <ol>
+            <li><strong>Cost</strong> - Cloud computing eliminates the capital expense of buying hardware and software and setting up and running on-site datacenters—the racks of servers, the round-the-clock electricity for power and cooling, and the IT experts for managing the infrastructure. It adds up fast.</li>
+            <li><strong>Speed</strong> - Most cloud computing services are provided self-service and on-demand, so even vast amounts of computing resources can be provisioned in minutes, typically with just a few mouse clicks, giving businesses a lot of flexibility and taking the pressure off capacity planning.</li>
+            <li><strong>Global scale</strong> - The benefits of cloud computing services include the ability to scale elastically. In cloud speak, that means delivering the right amount of IT resources—for example, more or less computing power, storage, bandwidth—right when it’s needed and from the right geographic location.</li>
+            <li><strong>Productivity</strong> - On-site datacenters typically require a lot of “racking and stacking”—hardware setup, software patching, and other time-consuming IT management chores. Cloud computing removes the need for many of these tasks, so IT teams can spend time on achieving more important business goals.</li>
+            <li><strong>Performance</strong> - The biggest cloud computing services run on a worldwide network of secure datacenters, which are regularly upgraded to the latest generation of fast and efficient computing hardware. This offers several benefits over a single corporate datacenter, including reduced network latency for applications and greater economies of scale.</li>
+            <li><strong>Reliability</strong> - Cloud computing makes data backup, disaster recovery, and business continuity easier and less expensive because data can be mirrored at multiple redundant sites on the cloud provider’s network.</li>
+            <li><strong>Security</strong> - Many cloud providers offer a broad set of policies, technologies, and controls that strengthen your security posture overall, helping protect data, apps, and infrastructure from potential threats.</li>
+        </ol>
+    </div>
+    <div id="output"></div>
+
+    <script>
+        $(document).ready(function() {
+            $(document).on('mouseup', function() {
+                var selectedText = getSelectedText();
+                if (selectedText !== '') {
+                    $('#loading').show(); // Show loading message
+                    $.ajax({
+                        type: 'POST',
+                        url: '/process_text',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ selected_text: selectedText, additional_line: "Explain it to the 10 year old" }),
+                        success: function(response) {
+                            $('#output').html(response.output); // Display output
+                            $('#loading').hide(); // Hide loading message
+                        }
+                    });
+                }
+            });
+
+            function getSelectedText() {
+                var selectedText = '';
+                if (window.getSelection) {
+                    selectedText = window.getSelection().toString();
+                } else if (document.selection && document.selection.type != 'Control') {
+                    selectedText = document.selection.createRange().text;
+                }
+                return selectedText.trim();
+            }
+        });
+    </script>
+</body>
+</html>
